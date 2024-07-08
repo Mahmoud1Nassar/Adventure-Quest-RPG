@@ -7,7 +7,7 @@ using System.Xml.Linq;
 
 namespace Adventure_Quest_RPG
 {
-    public abstract class Monster
+    public abstract class Monster : IBattleStates
     {
         private static Random random = new Random();
 

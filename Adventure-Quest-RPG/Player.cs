@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Adventure_Quest_RPG
 {
-    public class Player
+    public class Player : IBattleStates
     {
         private static Random random = new Random();
 

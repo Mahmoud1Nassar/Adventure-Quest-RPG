@@ -8,23 +8,32 @@ namespace Adventure_Quest_RPG
 {
     public class BattleSystem
     {
-        public void Attack(dynamic attacker, dynamic target)
+        public void Attack(IBattleStates attacker, IBattleStates target)
         {
-            // Randomize the defense value before each attack
-            target.RandomizeDefense();
+            if (target is Player playerTarget)
+            {
+                playerTarget.RandomizeDefense();
+            }
+            else if (target is Monster monsterTarget)
+            {
+                monsterTarget.RandomizeDefense();
+            }
 
-            // Calculate the damage inflicted, considering the random nature of defense
             int damage = Math.Max(attacker.AttackPower - target.Defense, 0);
 
-            // Debugging: Print defense and damage values
             Console.WriteLine($"[{attacker.Name} attacks {target.Name}]");
             Console.WriteLine($"  - {target.Name}'s defense: {target.Defense}");
             Console.WriteLine($"  - Calculated damage: {damage}");
 
-            // Reduce the target's health by the calculated damage amount
-            target.ReduceHealth(damage);
+            if (target is Player)
+            {
+                (target as Player).ReduceHealth(damage);
+            }
+            else if (target is Monster)
+            {
+                (target as Monster).ReduceHealth(damage);
+            }
 
-            // Display information about the attack
             Console.WriteLine($"  - {target.Name}'s updated health: {target.Health}");
             Console.WriteLine(new string('-', 30)); // Separator for readability
         }
