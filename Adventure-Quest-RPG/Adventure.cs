@@ -10,6 +10,7 @@ namespace Adventure_Quest_RPG
         private BattleSystem battleSystem;
         private Location currentLocation;
         private List<Location> locations;
+        private static Random random = new Random(); // Declare random as a class member
 
         public Location CurrentLocation => currentLocation;
 
@@ -53,7 +54,9 @@ namespace Adventure_Quest_RPG
                 Console.WriteLine("Choose an action:");
                 Console.WriteLine("1. Discover a new location");
                 Console.WriteLine("2. Attack a monster");
-                Console.WriteLine("3. End game");
+                Console.WriteLine("3. View Inventory");
+                Console.WriteLine("4. Use an Item");
+                Console.WriteLine("5. End game");
                 string choice = Console.ReadLine();
 
                 switch (choice)
@@ -65,6 +68,12 @@ namespace Adventure_Quest_RPG
                         AttackMonster();
                         break;
                     case "3":
+                        ViewInventory();
+                        break;
+                    case "4":
+                        UseItem();
+                        break;
+                    case "5":
                         playing = false;
                         Console.WriteLine("Thanks for playing!");
                         break;
@@ -99,22 +108,49 @@ namespace Adventure_Quest_RPG
 
         private void AttackMonster()
         {
-            Random random = new Random();
-            Monster monster = monsters[random.Next(monsters.Count)];
+            Monster monster = GenerateRandomMonster();
             Console.WriteLine($"You encountered a {monster.Name}!");
 
             battleSystem.StartBattle(player, monster);
         }
 
+        private Monster GenerateRandomMonster()
+        {
+            // Generate a new monster instance each time to ensure fresh monsters
+            int monsterIndex = random.Next(monsters.Count);
+            Monster monster = monsters[monsterIndex];
+
+            if (monster is Goblin)
+                return new Goblin("Goblin");
+            else if (monster is Dragon)
+                return new Dragon("Dragon");
+            else if (monster is BossMonster)
+                return new BossMonster("Dragon Boss");
+
+            return null;
+        }
+
+        private void ViewInventory()
+        {
+            player.Inventory.DisplayInventory();
+        }
+
+        private void UseItem()
+        {
+            Console.WriteLine("Enter the name of the item you want to use:");
+            string itemName = Console.ReadLine();
+            player.UseItem(itemName);
+        }
+
         // Helper method for testing encountering a specific monster
-        public void TestEncounterMonster(Monster monster)
+        internal void TestEncounterMonster(Monster monster)
         {
             Console.WriteLine($"You encountered a {monster.Name}!");
             battleSystem.StartBattle(player, monster);
         }
 
         // Helper method for testing moving to a specific location
-        public void TestMoveToLocation(int locationIndex)
+        internal void TestMoveToLocation(int locationIndex)
         {
             if (locationIndex >= 0 && locationIndex < locations.Count)
             {
