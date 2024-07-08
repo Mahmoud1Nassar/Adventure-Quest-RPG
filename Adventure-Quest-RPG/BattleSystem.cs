@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Adventure_Quest_RPG
 {
     public class BattleSystem
     {
+        private static Random random = new Random();
+
         public void Attack(IBattleStates attacker, IBattleStates target)
         {
             if (target is Player playerTarget)
@@ -36,12 +34,48 @@ namespace Adventure_Quest_RPG
 
             Console.WriteLine($"  - {target.Name}'s updated health: {target.Health}");
             Console.WriteLine(new string('-', 30)); // Separator for readability
+
+            if (target.Health <= 0 && target is Monster)
+            {
+                HandleItemDrop(attacker as Player);
+            }
+        }
+
+        private void HandleItemDrop(Player player)
+        {
+            int dropChance = random.Next(1, 101); // 1 to 100 percent chance
+
+            if (dropChance <= 20) // 20% chance to drop an item
+            {
+                Item droppedItem = GenerateRandomItem();
+                player.Inventory.AddItem(droppedItem);
+            }
+        }
+
+        private Item GenerateRandomItem()
+        {
+            int itemType = random.Next(1, 4); // 1 to 3
+
+            switch (itemType)
+            {
+                case 1:
+                    return new Weapon("Sword", "A sharp blade.", random.Next(5, 16));
+                case 2:
+                    return new Armor("Shield", "Provides protection.", random.Next(3, 10));
+                case 3:
+                    return new Potion("Health Potion", "Restores health.", random.Next(10, 31));
+                default:
+                    return null;
+            }
         }
 
         public void StartBattle(Player player, Monster enemy)
         {
             Console.WriteLine("Battle Start!");
             Console.WriteLine(new string('=', 30)); // Separator for the start of the battle
+
+            // Reset player health for each battle
+            player.Health = 100;
 
             while (player.Health > 0 && enemy.Health > 0)
             {
